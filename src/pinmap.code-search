@@ -1,0 +1,260 @@
+# Query: pinmap
+# ContextLines: 1
+
+94 个结果 - 20 文件
+
+include\Config.h:
+  18  
+  19: // 引脚定义 --------------------------------------------- 详见 https://onstep.groups.io/g/main/wiki/Configuration_Controller#PINMAP
+  20: #define PINMAP                        MaxESP4 // 关闭，选择：MiniPCB, MiniPCB2, MaxPCB4, MaxESP4, MaxSTM3, FYSETC_E4,   必须项
+  21                                            //         BTT_SKR_PRO 等。更多主板信息详见 ~/src/Constants.h
+
+  24  #define SERIAL_A_BAUD_DEFAULT        9600 // 9600，波特率：9600,19200,57600,115200,230400,460800（常用波特率）    不常用
+  25: #define SERIAL_B_BAUD_DEFAULT        9600 // 9600，同上波特率。串口分配详见 (src/pinmaps/)                     不常用
+  26  #define SERIAL_B_ESP_FLASHING         OFF // 关闭，开启后通过 SERIAL_B 使用 :ESPFLASH# 命令上传 ESP8266 WiFi 固件  可选项
+  27: #define SERIAL_C_BAUD_DEFAULT         OFF // 关闭，同上波特率。串口分配详见 (src/pinmaps/)                     不常用
+  28: #define SERIAL_D_BAUD_DEFAULT         OFF // 关闭，同上波特率。串口分配详见 (src/pinmaps/)                     不常用
+  29: #define SERIAL_E_BAUD_DEFAULT         OFF // 关闭，同上波特率。串口分配详见 (src/pinmaps/)                     不常用
+  30  #define SERIAL_RADIO                  OFF // 关闭，使用蓝牙 或 WiFi 接入点/工作站模式（仅 ESP32）              可选项
+
+src\Common.h:
+  20  #include "lib/Macros.h"
+  21: #include "pinmaps/Models.h"
+  22  #include "lib/debug/Debug.h"
+
+src\Config.defaults.h:
+  24  
+  25: // pinmap
+  26: #ifndef PINMAP
+  27: #define PINMAP                        OFF
+  28  #endif
+
+src\Constants.h:
+   6  
+   7: // PINMAPS
+   8: #define PINMAP_FIRST                1
+   9  
+
+  44  
+  45: #define PINMAP_LAST                 24
+  46  
+
+src\main.cpp:
+  82  
+  83:   // let any special processing the pinmap needs happen
+  84    #ifdef PIN_INIT
+
+  91    VF("MSG: OnStepX, MCU "); VLF(MCU_STR);
+  92:   VF("MSG: OnStepX, pinmap "); VLF(PINMAP_STR);
+  93  
+
+src\Validate.h:
+  25  #if defined(STEP_DIR_TMC_UART_PRESENT) && (!defined(SERIAL_TMC) || !defined(SERIAL_TMC_BAUD))
+  26:   #error "Configuration (Config.h): This PINMAP doesn't support TMC UART mode drivers"
+  27  #endif
+
+  29  // TELESCOPE -------------------------------------
+  30: #if PINMAP != OFF && (PINMAP < PINMAP_FIRST || PINMAP > PINMAP_LAST)
+  31:   #error "Configuration (Config.h): PINMAP must be set to a valid board (from Constants.h) or OFF (for user pin defs in Config.h)"
+  32  #endif
+
+src\HAL\stm32\STM32F4x1.h:
+  55    #undef NV_DRIVER
+  56:   #if PINMAP == MaxSTM3I
+  57      // The MaxPCB3I has an 8192 byte EEPROM built-in (rated for 5M write cycles)
+
+src\HAL\stm32\STM32F446.h:
+  57    #undef NV_DRIVER
+  58:   #if PINMAP == FYSETC_S6_2
+  59      // The FYSETC S6 v2 has a 4096 byte EEPROM built-in
+  60      #define NV_DRIVER NV_2432
+  61:   #elif PINMAP == FYSETC_S6
+  62      // The FYSETC S6 has a 2048 byte EEPROM built-in
+
+src\lib\axis\motor\oDrive\ODrive.h:
+  11  
+  12: // the following would be in the pinmap normally and should trigger #error on compile here when not present
+  13  // for now, they fit your hardware as best as I can tell...
+
+src\pinmaps\Models.h:
+   1  // -------------------------------------------------------------------------------------------------
+   2: // Loads pinmap model for current configuration
+   3  #pragma once
+   4  
+   5: #if PINMAP == MiniPCB
+   6:   #define PINMAP_STR "MiniPCB v1"
+   7    #include "Pins.MiniPCB.h"
+   8  #endif
+   9: #if PINMAP == MiniPCB13
+  10:   #define PINMAP_STR "MiniPCB v1.3"
+  11    #include "Pins.MiniPCB.h"
+  12  #endif
+  13: #if PINMAP == MiniPCB2
+  14:   #define PINMAP_STR "MiniPCB v2"
+  15    #include "Pins.MiniPCB.h"
+  16  #endif
+  17: #if PINMAP == MaxPCB
+  18:   #define PINMAP_STR "MaxPCB v1"
+  19    #include "Pins.MaxPCB.h"
+  20  #endif
+  21: #if PINMAP == MaxPCB2
+  22:   #define PINMAP_STR "MaxPCB v2"
+  23    #include "Pins.MaxPCB.h"
+  24  #endif
+  25: #if PINMAP == MaxPCB3
+  26    #ifdef ARDUINO_TEENSY41
+  27:     #define PINMAP_STR "MaxPCB v3.6"
+  28      #include "Pins.MaxPCB36.h"
+  29    #else
+  30:     #define PINMAP_STR "MaxPCB v3"
+  31      #include "Pins.MaxPCB3.h"
+
+  33  #endif
+  34: #if PINMAP == MaxPCB4
+  35:   #define PINMAP_STR "MaxPCB v4"
+  36    #include "Pins.MaxPCB4.h"
+  37  #endif
+  38: #if PINMAP == MaxESP3
+  39:   #define PINMAP_STR "MaxESP v3"
+  40    #include "Pins.MaxESP3.h"
+  41  #endif
+  42: #if PINMAP == MaxESP4
+  43:   #define PINMAP_STR "MaxESP v4"
+  44    #include "Pins.MaxESP4.h"
+  45  #endif
+  46: #if PINMAP == CNC3
+  47:   #define PINMAP_STR "CNC v3"
+  48    #include "Pins.CNC3.h"
+  49  #endif
+  50: #if PINMAP == MicroScope // Experimental and may be removed at any point!  USE AY YOUR OWN RISK!!!
+  51:   #define PINMAP_STR "MicroScope v0.2"
+  52    #include "Pins.MicroScope.h"
+  53  #endif
+  54: #if PINMAP == STM32Blue
+  55:   #define PINMAP_STR "STM32 Bluepill"
+  56    #include "Pins.STM32B.h"
+  57  #endif
+  58: #if PINMAP == FYSETC_E4
+  59:   #define PINMAP_STR "FYSETC E4"
+  60    #include "Pins.FYSETC_E4.h"
+  61  #endif
+  62: #if PINMAP == FYSETC_S6
+  63:   #define PINMAP_STR "FYSETC S6"
+  64    #include "Pins.FYSETC_S6.h"
+  65  #endif
+  66: #if PINMAP == FYSETC_S6_2
+  67:   #define PINMAP_STR "FYSETC S6 v2"
+  68    #include "Pins.FYSETC_S6.h"
+  69  #endif
+  70: #if PINMAP == BTT_SKR_PRO
+  71:   #define PINMAP_STR "BTT SKR PRO v1.2"
+  72    #include "Pins.SKR_PRO.h"
+  73  #endif
+  74: #if PINMAP == BTT_OCTOPUS_PRO
+  75:   #define PINMAP_STR "BTT OCTOPUS PRO v1.1"
+  76    #include "Pins.OctopusPro.h"
+  77  #endif
+  78: #if PINMAP == JTWSTM
+  79:   #define PINMAP_STR "JTWSTM v2.1"
+  80    #include "Pins.JTWPCB2.h"
+  81  #endif
+  82: #if PINMAP == MANTICORE
+  83:   #define PINMAP_STR "JTW MANTICORE v1.0"
+  84    #include "Pins.Manticore.h"
+  85  #endif
+  86: #if PINMAP == MaxSTM3 || PINMAP == MaxSTM3I
+  87:   #define PINMAP_STR "MaxSTM v3"
+  88    #include "Pins.MaxSTM.h"
+  89  #endif
+  90: #if PINMAP == SAL_XB1
+  91:   #define PINMAP_STR "SAL-XB1"
+  92    #include "Pins.SAL_XB1.h"
+  93  #endif
+  94: #ifndef PINMAP_STR
+  95:   #define PINMAP_STR "Unknown"
+  96  #endif
+
+src\pinmaps\Pins.FYSETC_E4.h:
+  1  // -------------------------------------------------------------------------------------------------
+  2: // Pinmap for FYSETC E4 Version 1.0 (ESP32)
+  3  #pragma once
+
+src\pinmaps\Pins.FYSETC_S6.h:
+  118  // Soft SPI bus to stepper drivers
+  119: #if PINMAP == FYSETC_S6_2
+  120    #define SS_MOSI               PE14
+
+  129  // Axis1 RA/Azm step/dir driver
+  130: #if PINMAP == FYSETC_S6_2
+  131    #define AXIS1_ENABLE_PIN      PE9
+
+src\pinmaps\Pins.Manticore.h:
+  6  
+  7: // let any special processing the pinmap needs happen
+  8  #define PIN_INIT() { \
+
+src\pinmaps\Pins.MaxSTM.h:
+  7  // For an 8KB EEPROM on the MaxSTM3.6I
+  8: #if PINMAP == MaxSTM3I
+  9    #define NV_M24C32
+
+src\pinmaps\Pins.MiniPCB.h:
+  41  #endif
+  42: #if PINMAP == MiniPCB13
+  43    #define ADDON_GPIO0_PIN       2                // ESP8266 GPIO0 (Dir2)
+
+  94  #define AXIS2_M2_PIN            6                // SPI CS (UART TX)
+  95: #if PINMAP == MiniPCB13
+  96    #define AXIS2_M3_PIN          AUX1_PIN         // SPI MISO (UART RX)
+
+src\pinmaps\Pins.OctopusPro.h:
+  1  // -------------------------------------------------------------------------------------------------
+  2: // Pinmap for the BTT Octopus Pro Version 1.1 (STM32H723)
+  3  #pragma once
+
+src\pinmaps\Pins.SKR_PRO.h:
+  1  // -------------------------------------------------------------------------------------------------
+  2: // Pinmap for the BTT SKR PRO Version 1.2 (STM32F407)
+  3  #pragma once
+
+src\pinmaps\Pins.STM32B.h:
+   36  
+   37: #if PINMAP == STM32Blue
+   38  
+
+  140  #else
+  141:   #error "Unknown STM32 Board. This pinmap is only for Blue and Black Pill variants"
+  142  #endif
+
+src\pinmaps\Validate.h:
+   1  // -------------------------------------------------------------------------------------------------
+   2: // Validates pinmap model for current configuration
+   3  #pragma once
+
+  28  #if SERIAL_B_ESP_FLASHING == ON  && (!defined(ADDON_GPIO0_PIN) || !defined(ADDON_RESET_PIN))
+  29:   #error "Configuration (Config.h): SERIAL_B_ESP_FLASHING not supported for this PINMAP"
+  30  #endif
+
+  38  #if AXIS2_POWER_DOWN == ON && (AXIS2_EN_PIN == OFF || AXIS2_EN_PIN == SHARED)
+  39:   #error "Configuration (Config.h): AXIS2_POWER_DOWN not supported on this PINMAP"
+  40  #endif
+
+  43  #if TIME_LOCATION_SOURCE == DS3234 && !defined(DS3234_CS_PIN)
+  44:   #if PINMAP == Classic
+  45:       #error "Configuration (Config.h): DS3234 TIME_LOCATION_SOURCE using SPI is not supported, use PINMAP ClassicShield or add '#define ST4_ALTERNATE_PINS_ON' to move the ST4 port pins"
+  46      #else
+  47:       #error "Configuration (Config.h): DS3234 TIME_LOCATION_SOURCE using SPI is not supported for this PINMAP"
+  48    #endif
+
+  53    #if AXIS3_STEP_PIN == AXIS4_STEP_PIN
+  54:     #error "Configuration (Config.h): AXIS3 and AXIS4 step/dir interface is shared, so enabling both is not supported on this PINMAP"
+  55    #endif
+
+  59    #if AXIS3_STEP_PIN == AXIS5_STEP_PIN
+  60:     #error "Configuration (Config.h): AXIS3 and AXIS5 step/dir interface is shared, so enabling both is not supported on this PINMAP"
+  61    #endif
+
+src\telescope\Telescope.command.cpp:
+  207        if (parameter[0] == 'C') { strncpy(reply, PRODUCT_DESCRIPTION, 40); } else
+  208:       if (parameter[0] == 'H') strcpy(reply, PINMAP_STR); else *commandError = CE_CMD_UNKNOWN;
+  209        *numericReply = false;
