@@ -85,6 +85,9 @@ lib_deps =
 
 You could also add gps to the **core**, it just depends if you are building OnStepX for multiple hardware platforms.
 
+A good place to look for what libraries you need for common hardware (RTC, Weather devices etc) is the OnStep site, I found this a good place to start [https://onstep.groups.io/g/main/wiki/32794](https://onstep.groups.io/g/main/wiki/32794).
+
+
 ## PlatformIO next steps 
 
 A normal development lifecycle is 
