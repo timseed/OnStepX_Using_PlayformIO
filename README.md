@@ -59,7 +59,7 @@ Just add the repo
 ; Optional - GPS
 gps =
     https://github.com/mikalhart/TinyGPSPlus.git
-	https://github.com/SuperGpsMk3/SuperGpsMk3_2.git
+    https://github.com/SuperGpsMk3/SuperGpsMk3_2.git
 ```
 
 When platformIO reloads the config, it will fetch this repo, and place it into the ArduinoEnviroment. 
@@ -80,7 +80,7 @@ There is **NO GPS** being used in the link/library phase. So you will get link e
 ; Minimal build - core libraries only
 lib_deps =
     ${common_libs.core}
-	${common_libs.gps}
+    ${common_libs.gps}
 ```
 
 You could also add gps to the **core**, it just depends if you are building OnStepX for multiple hardware platforms.
